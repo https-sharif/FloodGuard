@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Victim from "./pages/Victim";
@@ -10,7 +10,7 @@ import VolunteerPage from "./pages/VolunteerPage";
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <BrowserRouter basename="/">
+      <Router basename="/">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -20,7 +20,7 @@ function App() {
           <Route path="/victim-page" element={<VictimPage />} />
           <Route path="/volunteer-page" element={<VolunteerPage />} />
         </Routes>
-      </BrowserRouter>
+      </Router>
     </div>
   );
 }

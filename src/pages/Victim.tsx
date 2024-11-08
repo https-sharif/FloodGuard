@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { AlertTriangle } from "lucide-react";
+import LocationPicker from "../components/LocationPicker";
+import { LocationType } from "../types/location";
 
 interface VictimForm {
   name: string;
@@ -33,16 +35,46 @@ const emergencyNeeds = [
 
 function Victim() {
   const [form, setForm] = useState<VictimForm>(initialForm);
-  // const [imagePreview, setImagePreview] = useState<File | null>(null);
+  const [location, setLocation] = useState<LocationType | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
-  // const handlePhotoSelect = (image: File) => {
-  //   setImagePreview(image);
-  // };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Submit form data to backend
-    console.log("Form submitted:", form);
+
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("phone", form.phone);
+    formData.append("peopleCount", form.peopleCount.toString());
+    formData.append("needs", form.needs.join(","));
+    formData.append("description", form.description);
+    if (location) {
+      formData.append("location", JSON.stringify(location));
+    }
+
+    try {
+      const response = await fetch("/submit-victim", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit your request");
+      }
+
+      const data = await response.json();
+      setMessage(
+        "Your request has been submitted. Please wait for the rescue team to reach out to you."
+      );
+      console.log(data);
+      setForm(initialForm);
+    } catch (error) {
+      if (error instanceof Error) {
+        setMessage("Error: " + error.message);
+      } else {
+        setMessage("An unknown error occurred");
+      }
+    }
   };
 
   const handleNeedsChange = (need: string) => {
@@ -176,24 +208,8 @@ function Victim() {
                 placeholder="Please describe your current situation and any specific needs..."
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Upload Situation Photo
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                id="photo"
-                onChange={(e) => handlePhotoSelect(e.target.files?.[0] as File)}
-              />
-            </div>
-            <div>
-              <span className="block text-sm font-medium text-gray-700 mb-2">
-                Your Location
-              </span>
-            </div>
+            <div>Your Location</div>
+            <LocationPicker onLocationSelect={setLocation} />
           </div>
 
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
@@ -215,6 +231,12 @@ function Victim() {
             Submit Emergency Request
           </button>
         </form>
+
+        {message && (
+          <div className="mt-4 p-4 bg-blue-50 text-blue-700 rounded-md">
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );
