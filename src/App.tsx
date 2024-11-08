@@ -10,8 +10,8 @@ import VolunteerPage from "./pages/VolunteerPage";
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <BrowserRouter basename="/">
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/victim" element={<Victim />} />
