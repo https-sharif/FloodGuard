@@ -3,7 +3,6 @@ import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import multer from 'multer';
-import { Buffer } from 'buffer';
 
 dotenv.config();
 

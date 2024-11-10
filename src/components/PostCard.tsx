@@ -45,6 +45,7 @@ export default function PostCard({ post }: PostCardProps) {
                 </span>
             </div>
 
+
             <div className="px-4 pb-3">
                 <p className="text-gray-800 whitespace-pre-line">{post.content}</p>
 

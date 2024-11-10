@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { Post, PostFilters } from '../types/post';
 import PostCard from '../components/PostCard';
-import PostFiltersComponent from '../components/PostFilters.tsx';
+import PostFiltersComponent from '../components/PostFilters';
 
 const DEMO_POSTS: Post[] = [
     {
         id: '1',
         author: {
             id: '1',
-            name: 'Sarah Johnson',
+            name: 'Ridika Singh',
             avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
             role: 'volunteer'
         },
         content: 'Available to help with food and medicine distribution in downtown area. Can accommodate up to 20 families. Available from 9 AM to 5 PM.',
-        location: 'Downtown Relief Center',
+        location: 'East West University',
         createdAt: '2h ago',
         needType: ['Food', 'Medicine'],
         status: 'active',
@@ -22,7 +22,7 @@ const DEMO_POSTS: Post[] = [
         id: '2',
         author: {
             id: '2',
-            name: 'Michael Chen',
+            name: 'Saimongu K Chakma',
             avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
             role: 'volunteer'
         },
@@ -31,7 +31,7 @@ const DEMO_POSTS: Post[] = [
             'https://images.unsplash.com/photo-1527853787696-f7be74f2e39a',
             'https://images.unsplash.com/photo-1601055283742-8b27e81b5553'
         ],
-        location: 'Riverside Community Center',
+        location: 'East Delta University',
         createdAt: '5h ago',
         needType: ['Shelter', 'Clothing'],
         status: 'active',
@@ -57,7 +57,6 @@ export default function VolunteerPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {/* Filters */}
                     <div className="md:col-span-1">
                         <PostFiltersComponent
                             filters={filters}
@@ -65,7 +64,6 @@ export default function VolunteerPage() {
                         />
                     </div>
 
-                    {/* Posts */}
                     <div className="md:col-span-3">
                         <div className="space-y-6">
                             {filteredPosts.map((post) => (

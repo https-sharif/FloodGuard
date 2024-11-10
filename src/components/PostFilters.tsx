@@ -17,7 +17,6 @@ export default function PostFilters({ filters, onFilterChange }: PostFiltersProp
             </div>
 
             <div className="space-y-4">
-                {/* Status Filter */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Status
@@ -33,7 +32,6 @@ export default function PostFilters({ filters, onFilterChange }: PostFiltersProp
                     </select>
                 </div>
 
-                {/* Need Type Filter */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Need Type
@@ -60,7 +58,6 @@ export default function PostFilters({ filters, onFilterChange }: PostFiltersProp
                     </div>
                 </div>
 
-                {/* Location Filter */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                         Location

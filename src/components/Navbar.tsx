@@ -8,7 +8,7 @@ const Navbar = () => {
 
     const navItems = [
         { name: 'Home', icon: <Home className="w-5 h-5" />, path: '/' },
-        { name: 'Victim', icon: <Users className="w-5 h-5" />, path: '/victim-page' },
+        { name: 'Affected', icon: <Users className="w-5 h-5" />, path: '/affected-page' },
         { name: 'Volunteer', icon: <HeartHandshake className="w-5 h-5" />, path: '/volunteer-page' },
         { name: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" />, path: '/dashboard' },
     ];

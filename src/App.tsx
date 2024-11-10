@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Victim from "./pages/Victim";
 import Volunteer from "./pages/Volunteer";
 import Dashboard from "./pages/Dashboard";
-import VictimPage from "./pages/VictimPage";
+import AffectedPage from "./pages/AffectedPage";
 import VolunteerPage from "./pages/VolunteerPage";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
           <Route path="/victim" element={<Victim />} />
           <Route path="/volunteer" element={<Volunteer />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/victim-page" element={<VictimPage />} />
+          <Route path="/affected-page" element={<AffectedPage />} />
           <Route path="/volunteer-page" element={<VolunteerPage />} />
         </Routes>
       </Router>

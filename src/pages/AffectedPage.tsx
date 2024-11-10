@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Post, PostFilters } from '../types/post';
-import PostCard from '../components/PostCard';
+import { Post, PostFilters } from '../types/post.ts';
+import PostCard from '../components/PostCard.tsx';
 import PostFiltersComponent from '../components/PostFilters.tsx';
 
 const DEMO_POSTS: Post[] = [
@@ -37,7 +37,7 @@ const DEMO_POSTS: Post[] = [
     }
 ];
 
-export default function VictimPage() {
+export default function AffectedPage() {
     const [filters, setFilters] = useState<PostFilters>({});
 
     const filteredPosts = DEMO_POSTS.filter((post) => {
@@ -55,7 +55,6 @@ export default function VictimPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {/* Filters */}
                     <div className="md:col-span-1">
                         <PostFiltersComponent
                             filters={filters}
@@ -63,7 +62,6 @@ export default function VictimPage() {
                         />
                     </div>
 
-                    {/* Posts */}
                     <div className="md:col-span-3">
                         <div className="space-y-6">
                             {filteredPosts.map((post) => (

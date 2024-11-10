@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-interface GeolocationState {
+interface LocationType {
   loading: boolean;
   error: string | null;
   location: {
@@ -9,8 +9,8 @@ interface GeolocationState {
   } | null;
 }
 
-export function useGeolocation() {
-  const [state, setState] = useState<GeolocationState>({
+export function useLocation() {
+  const [state, setState] = useState<LocationType>({
     loading: true,
     error: null,
     location: null,

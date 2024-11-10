@@ -111,7 +111,7 @@ function Victim() {
                 type="text"
                 id="name"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 border px-2 block w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 value={form.name}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, name: e.target.value }))
@@ -130,7 +130,7 @@ function Victim() {
                 type="tel"
                 id="phone"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block px-2 border w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 value={form.phone}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, phone: e.target.value }))
@@ -150,7 +150,7 @@ function Victim() {
                 id="peopleCount"
                 min="1"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-64 border rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 value={form.peopleCount}
                 onChange={(e) =>
                   setForm((prev) => ({
@@ -200,7 +200,7 @@ function Victim() {
               <textarea
                 id="description"
                 rows={4}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block border px-2 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 value={form.description}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, description: e.target.value }))
