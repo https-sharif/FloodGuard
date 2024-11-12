@@ -3,7 +3,7 @@ import { Users, HeartHandshake, MessageCircle, Package, UserCheck, Clock } from 
 import dayjs from 'dayjs';
 import RT from 'dayjs/plugin/relativeTime';
 import Footer from '../components/Footer';
-import MapComponent from '../components/Map';
+import Map from '../components/Map';
 
 dayjs.extend(RT);
 
@@ -107,7 +107,7 @@ function Home() {
             </div>
 
             <div className='bg-white rounded-xl shadow-lg p-6 mb-12'> 
-                <MapComponent />
+                <Map />
             </div>
 
             <div className="bg-white rounded-xl shadow-lg p-6 mb-12">

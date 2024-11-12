@@ -1,76 +1,83 @@
-import { useState } from 'react';
-import { Post, PostFilters } from '../types/post.ts';
-import PostCard from '../components/PostCard.tsx';
-import PostFiltersComponent from '../components/PostFilters.tsx';
-
-const DEMO_POSTS: Post[] = [
-    {
-        id: '1',
-        author: {
-            id: '1',
-            name: 'Israt Jahan',
-            avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80',
-            role: 'victim'
-        },
-        content: 'Urgently need assistance for a family of 5. We require food supplies and clean drinking water. Currently staying at temporary shelter.',
-        location: 'North Side Shelter',
-        peopleCount: 5,
-        createdAt: '1h ago',
-        needType: ['Food', 'Water'],
-        status: 'active',
-    },
-    {
-        id: '2',
-        author: {
-            id: '2',
-            name: 'Ittekhar Mahin Abir',
-            avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-            role: 'victim'
-        },
-        content: 'Need medical supplies for elderly parents. Also looking for transportation assistance to medical center.',
-        images: ['https://images.unsplash.com/photo-1587854692152-cbe660dbde88'],
-        location: 'East Valley Area',
-        peopleCount: 3,
-        createdAt: '3h ago',
-        needType: ['Medicine', 'Transport'],
-        status: 'active',
-    }
-];
+import { useState , useEffect } from "react";
+import { PostFilters, VictimPostType } from "../types/post.ts";
+import PostFiltersComponent from "../components/PostFilters.tsx";
+import VictimPost from "../components/VictimPost.tsx";
 
 export default function AffectedPage() {
-    const [filters, setFilters] = useState<PostFilters>({});
+  const [filters, setFilters] = useState<PostFilters>({});
+  const [posts, setPosts] = useState<VictimPostType[]>([]);
 
-    const filteredPosts = DEMO_POSTS.filter((post) => {
-        if (filters.status && post.status !== filters.status) return false;
-        if (filters.needType?.length && !post.needType?.some(type => filters.needType?.includes(type))) return false;
-        if (filters.location && !post.location.toLowerCase().includes(filters.location.toLowerCase())) return false;
-        return true;
-    });
-
-    return (
-        <div className="min-h-screen bg-gray-50 pt-1">
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">Help Requests</h1>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="md:col-span-1">
-                        <PostFiltersComponent
-                            filters={filters}
-                            onFilterChange={setFilters}
-                        />
-                    </div>
-
-                    <div className="md:col-span-3">
-                        <div className="space-y-6">
-                            {filteredPosts.map((post) => (
-                                <PostCard key={post.id} post={post} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  const filteredPosts = posts
+    .filter((post) => {
+      if (
+        filters.needType?.length &&
+        !post.needs?.some((type) => filters.needType?.includes(type))
+      )
+        return false;
+      if (
+        filters.location &&
+        !post.location
+          .toLowerCase()
+          .includes(filters.location.toLowerCase())
+      )
+        return false;
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching victim posts...");
+        const response = await fetch("/get-victim");
+        const data = await response.json();
+        console.log("Fetched victim posts: ", data.data);
+        setPosts(data.data);
+        console.log(typeof data.data);
+      } catch (error) {
+        console.error(
+          "Error fetching victim posts: ",
+          error,
+          "Please refresh the page"
+        );
+      }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-50 pt-1">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Help Requests</h1>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="md:col-span-1">
+            <PostFiltersComponent
+              filters={filters}
+              onFilterChange={setFilters}
+            />
+          </div>
+
+          {filteredPosts.length > 0 ? (
+            <div className="md:col-span-3">
+              <div className="space-y-6">
+                {filteredPosts.map((post, index) => (
+                  <VictimPost key={index} {...post} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="md:col-span-3 bg-white border border-blue-500 rounded-lg shadow-sm p-4 justify-center items-center flex text-2xl font-bold text-center">
+              NO POSTS FOUND
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
