@@ -1,78 +1,82 @@
-import { useState } from 'react';
-import { Post, PostFilters } from '../types/post';
-import PostCard from '../components/PostCard';
-import PostFiltersComponent from '../components/PostFilters';
-
-const DEMO_POSTS: Post[] = [
-    {
-        id: '1',
-        author: {
-            id: '1',
-            name: 'Ridika Singh',
-            avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
-            role: 'volunteer'
-        },
-        content: 'Available to help with food and medicine distribution in downtown area. Can accommodate up to 20 families. Available from 9 AM to 5 PM.',
-        location: 'East West University',
-        createdAt: '2h ago',
-        needType: ['Food', 'Medicine'],
-        status: 'active',
-    },
-    {
-        id: '2',
-        author: {
-            id: '2',
-            name: 'Saimongu K Chakma',
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
-            role: 'volunteer'
-        },
-        content: 'Our team has set up a temporary shelter with basic amenities. We can provide immediate housing assistance for flood-affected families.',
-        images: [
-            'https://images.unsplash.com/photo-1527853787696-f7be74f2e39a',
-            'https://images.unsplash.com/photo-1601055283742-8b27e81b5553'
-        ],
-        location: 'East Delta University',
-        createdAt: '5h ago',
-        needType: ['Shelter', 'Clothing'],
-        status: 'active',
-
-    }
-];
+import { useState, useEffect } from "react";
+import { PostFilters, VolunteerPostType } from "../types/post";
+import PostFiltersComponent from "../components/PostFilters";
+import VolunteerPost from "../components/VolunteerPost";
 
 export default function VolunteerPage() {
-    const [filters, setFilters] = useState<PostFilters>({});
+  const [filters, setFilters] = useState<PostFilters>({});
+  const [posts, setPosts] = useState<VolunteerPostType[]>([]);
 
-    const filteredPosts = DEMO_POSTS.filter((post) => {
-        if (filters.status && post.status !== filters.status) return false;
-        if (filters.needType?.length && !post.needType?.some(type => filters.needType?.includes(type))) return false;
-        if (filters.location && !post.location.toLowerCase().includes(filters.location.toLowerCase())) return false;
-        return true;
-    });
-
-    return (
-        <div className="min-h-screen bg-gray-50 pt-1">
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900">Volunteer Posts</h1>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div className="md:col-span-1">
-                        <PostFiltersComponent
-                            filters={filters}
-                            onFilterChange={setFilters}
-                        />
-                    </div>
-
-                    <div className="md:col-span-3">
-                        <div className="space-y-6">
-                            {filteredPosts.map((post) => (
-                                <PostCard key={post.id} post={post} />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  const filteredPosts = posts
+    .filter((post) => {
+      if (
+        filters.needType?.length &&
+        !post.aidTypes?.some((type) => filters.needType?.includes(type))
+      )
+        return false;
+      if (
+        filters.location &&
+        !post.author.location
+          .toLowerCase()
+          .includes(filters.location.toLowerCase())
+      )
+        return false;
+      return true;
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching volunteer posts...");
+        const response = await fetch("/get-volunteer");
+        const data = await response.json();
+        console.log("Fetched volunteer posts: ", data);
+        setPosts(data.data);
+        console.log(data.data);
+      } catch (error) {
+        console.error(
+          "Error fetching volunteer posts: ",
+          error,
+          "Please refresh the page"
+        );
+      }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gray-50 pt-1">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Volunteer Posts</h1>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="md:col-span-1">
+            <PostFiltersComponent
+              filters={filters}
+              onFilterChange={setFilters}
+            />
+          </div>
+          {filteredPosts.length > 0 ? (
+            <div className="md:col-span-3">
+              <div className="space-y-6">
+                {filteredPosts.map((post, index) => (
+                  <VolunteerPost key={index} {...post} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="md:col-span-3 bg-white border border-blue-500 rounded-lg shadow-sm p-4 justify-center items-center flex text-2xl font-bold text-center">
+                NO POSTS FOUND
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

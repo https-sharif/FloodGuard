@@ -10,7 +10,7 @@ export default function PostFilters({ filters, onFilterChange }: PostFiltersProp
     const needTypes = ['Food', 'Medicine', 'Shelter', 'Clothing', 'Transport'];
 
     return (
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-6 hide-div">
             <div className="flex items-center space-x-2 mb-4">
                 <Filter className="h-5 w-5 text-gray-500" />
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
@@ -24,7 +24,7 @@ export default function PostFilters({ filters, onFilterChange }: PostFiltersProp
                     <select
                         value={filters.status || ''}
                         onChange={(e) => onFilterChange({ ...filters, status: e.target.value as 'active' | 'resolved' | undefined })}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className="mt-1 block w-full border p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     >
                         <option value="">All</option>
                         <option value="active">Active</option>
@@ -67,7 +67,7 @@ export default function PostFilters({ filters, onFilterChange }: PostFiltersProp
                         value={filters.location || ''}
                         onChange={(e) => onFilterChange({ ...filters, location: e.target.value })}
                         placeholder="Enter location..."
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        className="mt-1 p-2 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     />
                 </div>
             </div>

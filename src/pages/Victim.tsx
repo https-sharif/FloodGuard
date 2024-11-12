@@ -1,79 +1,89 @@
 import React, { useState } from "react";
 import { AlertTriangle } from "lucide-react";
 import LocationPicker from "../components/LocationPicker";
-import { LocationType } from "../types/location";
+import { LocationType} from "../types/location";
+import { CoordinateType, VictimPostType } from "../types/post";
 
-interface VictimForm {
-  name: string;
-  phone: string;
-  peopleCount: number;
-  needs: string[];
-  description: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  } | null;
-}
-
-const initialForm: VictimForm = {
+const initialForm: VictimPostType = {
   name: "",
   phone: "",
   peopleCount: 1,
   needs: [],
   description: "",
-  location: null,
+  createdAt: "",
+  location: "",
+  coordinates: {
+    latitude: 0,
+    longitude: 0,
+  },
+  author: {
+    coordinates: {
+      latitude: 0,
+      longitude: 0,
+    },
+    location: "",
+  },
 };
 
 const emergencyNeeds = [
-  "Water",
   "Food",
-  "Medical Aid",
+  "Medicine",
   "Shelter",
-  "Evacuation",
-  "Clothing",
+  "Clothing", 
+  "Transport",
+  "Other",
 ];
 
+const fetchUser = async () => {
+  try {
+    const response = await fetch('https://randomuser.me/api/?inc=name,location');
+    const data = await response.json();
+    const user = data.results[0];
+    const location = `${user.location.street.name}, ${user.location.city}`;
+    const coordinates : CoordinateType = {
+      latitude: user.location.coordinates.latitude,
+      longitude: user.location.coordinates.longitude
+    };
+    return { coordinates , location };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function Victim() {
-  const [form, setForm] = useState<VictimForm>(initialForm);
+  const [form, setForm] = useState<VictimPostType>(initialForm);
   const [location, setLocation] = useState<LocationType | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("phone", form.phone);
-    formData.append("peopleCount", form.peopleCount.toString());
-    formData.append("needs", form.needs.join(","));
-    formData.append("description", form.description);
-    if (location) {
-      formData.append("location", JSON.stringify(location));
-    }
+    const requestBody = {
+      ...form,
+      author: await fetchUser(),
+      createdAt: new Date().toISOString(),
+      location: location,
+    };
+    console.log(requestBody);
 
     try {
       const response = await fetch("/submit-victim", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit your request");
-      }
 
-      const data = await response.json();
-      setMessage(
-        "Your request has been submitted. Please wait for the rescue team to reach out to you."
-      );
-      console.log(data);
+      if (!response.ok) {
+        await response.json();
+        throw new Error("Failed to submit victim data");
+      }
+      setMessage("Your emergency request has been submitted successfully. Help is on the way!");
       setForm(initialForm);
     } catch (error) {
-      if (error instanceof Error) {
-        setMessage("Error: " + error.message);
-      } else {
-        setMessage("An unknown error occurred");
-      }
+      setMessage((error as Error).message);
     }
   };
 
@@ -150,7 +160,7 @@ function Victim() {
                 id="peopleCount"
                 min="1"
                 required
-                className="mt-1 block w-64 border rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block px-2 w-64 border rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 value={form.peopleCount}
                 onChange={(e) =>
                   setForm((prev) => ({

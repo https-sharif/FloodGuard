@@ -1,41 +1,60 @@
 import React, { useState } from "react";
 import LocationPicker from "../components/LocationPicker";
-import { Users, Package } from "lucide-react";
-import ImageUploading, { ImageListType } from "react-images-uploading";
+import { Users, Package, Image } from "lucide-react";
 import { LocationType } from "../types/location";
-
-interface FormType {
-  teamName: string;
-  memberCount: string;
-  phoneNumber: string;
-  aidTypes: string[];
-  description: string;
-  image: string;
-}
+import { VolunteerPostType } from "../types/post";
 
 const initialForm = {
+  author: {
+    name: "",
+    avatar: "",
+    location: "",
+  },
   teamName: "",
   memberCount: "",
   phoneNumber: "",
   aidTypes: [] as string[],
   description: "",
   image: "",
+  createdAt: "",
+  coordinates: {
+    latitude: 0,
+    longitude: 0,
+  },
+};
+
+const aidOptions = [
+  "Food",
+  "Medicine",
+  "Shelter",
+  "Clothing",
+  "Transport",
+  "Other",
+];
+
+const fetchUser = async () => {
+  try {
+    const response = await fetch("https://randomuser.me/api/?inc=name,picture,location");
+    const data = await response.json();
+    const user = data.results[0];
+    const avatar = user.picture.thumbnail;
+    const name = `${user.name.first} ${user.name.last}`;
+    const location = `${user.location.street.name}, ${user.location.city}`;
+    const coordinates = {
+      latitude: user.location.coordinates.latitude,
+      longitude: user.location.coordinates.longitude,
+    };
+    return { avatar, name, location, coordinates };
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 function Volunteer() {
-  const [form, setForm] = useState<FormType>(initialForm);
+  const [form, setForm] = useState<VolunteerPostType>(initialForm);
   const [location, setLocation] = useState<LocationType | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [images, setImages] = useState<File[]>([]);
-
-  const aidOptions = [
-    "Food",
-    "Water",
-    "Medicine",
-    "Clothing",
-    "Shelter",
-    "Other",
-  ];
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleAidTypeToggle = (type: string) => {
     setForm((prev) => ({
@@ -46,15 +65,15 @@ function Volunteer() {
     }));
   };
 
-  const onChange = (
-    imageList: ImageListType,
-    addUpdateIndex: number[] | undefined
-  ) => {
-
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList as never[]);
-    if (imageList.length > 0) {
-      setForm((prev) => ({ ...prev, image: imageList[0].data_url }));
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+        setForm((prev) => ({ ...prev, image: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -65,40 +84,31 @@ function Volunteer() {
       setMessage("Please upload a team photo.");
       return;
     }
-
-    const formData = new FormData();
-    formData.append("teamName", form.teamName);
-    formData.append("memberCount", form.memberCount);
-    formData.append("phoneNumber", form.phoneNumber);
-    formData.append("aidTypes", JSON.stringify(form.aidTypes));
-    formData.append("description", form.description);
-    formData.append("image", form.image);
-    if (location) {
-      formData.append("location", JSON.stringify(location));
-    }
+    const requestBody = {
+      ...form,
+      author: await fetchUser(),
+      createdAt: new Date().toISOString(),
+      location: location,
+    };
 
     try {
       const response = await fetch("/submit-volunteer", {
         method: "POST",
-        
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to submit volunteer data");
       }
-
-      const data = await response.json();
       setMessage("Volunteer data stored successfully");
-      console.log(data);
       setForm(initialForm);
     } catch (error) {
-      if (error instanceof Error) {
-        setMessage("Error: " + error.message);
-      } else {
-        setMessage("An unknown error occurred");
-      }
+      console.error(error);
+      setMessage("An unknown error occurred");
     }
   };
 
@@ -112,7 +122,7 @@ function Volunteer() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text- text-gray-700 mb-2">
                 Team Name
               </label>
               <input
@@ -126,7 +136,7 @@ function Volunteer() {
 
             <div className="flex space-x-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text- text-gray-700 mb-2">
                   Number of Team Members
                 </label>
                 <div className="relative">
@@ -144,7 +154,7 @@ function Volunteer() {
               </div>
 
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-bold text- text-gray-700 mb-2">
                   Contact Number
                 </label>
                 <input
@@ -160,7 +170,7 @@ function Volunteer() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text- text-gray-700 mb-2">
                 Types of Aid Carrying
               </label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -183,7 +193,7 @@ function Volunteer() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text- text-gray-700 mb-2">
                 Team Description & Resources
               </label>
               <textarea
@@ -197,48 +207,41 @@ function Volunteer() {
               />
             </div>
 
-              <div>Your Location</div>
+            <div>
+              <label className="block text-sm font-bold text- text-gray-700 mb-2">
+                Your Location
+              </label>
+            </div>
             <LocationPicker onLocationSelect={setLocation} />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Team Photo (Optional)
+              <label className="block text-sm font-bold text- text-gray-700 mb-2">
+                Team Photo
               </label>
             </div>
 
-            <ImageUploading
-              multiple
-              value={images}
-              onChange={onChange}
-              maxNumber={5}
-              dataURLKey="data_url"
-            >
-              {({
-                imageList,
-                onImageUpload,
-                onImageRemoveAll,
-                isDragging,
-                dragProps,
-              }) => (
-                <div>
-                  <div className="w-1/2 flex">
-                    <button
-                      style={isDragging ? { color: "red" } : undefined}
-                      onClick={onImageUpload}
-                      {...dragProps}
-                      className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
-                      Click or Drop here
-                    </button>
-                  </div>
-                  {imageList.map((image, index) => (
-                    <div key={index} className="image-item">
-                      <img src={image["data_url"]} alt="" width="100" onClick={onImageRemoveAll} />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </ImageUploading>
+            <div className="flex items-center justify-between">
+              <label className="flex items-center space-x-2 cursor-pointer px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                <Image className="w-5 h-5 text-gray-600" />
+                <span className="text-gray-600">Add Team Photo</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            {imagePreview && (
+              <div className="mt-4">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="max-h-64 rounded-lg object-cover"
+                />
+              </div>
+            )}
 
             <button
               type="submit"
