@@ -216,14 +216,14 @@ function Volunteer() {
 
             <div>
               <label className="block text-sm font-bold text- text-gray-700 mb-2">
-                Team Photo
+                Photo
               </label>
             </div>
 
             <div className="flex items-center justify-between">
               <label className="flex items-center space-x-2 cursor-pointer px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                 <Image className="w-5 h-5 text-gray-600" />
-                <span className="text-gray-600">Add Team Photo</span>
+                <span className="text-gray-600">Add Photo</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -263,3 +263,7 @@ function Volunteer() {
 }
 
 export default Volunteer;
+
+
+// We are currently stranded due to heavy flooding in our area. Water levels have risen, and access to essential supplies is completely cut off. One member of the group has a medical condition that requires immediate attention. We also need dry clothes and safe drinking water. A diabetic member in the group needs insulin. Please prioritize medical supplies for this.
+// Our team is ready to assist with immediate relief efforts in areas affected by the recent flood. We have a doctor and a paramedic in our group, along with food packets, water bottles, and warm clothing for distribution.

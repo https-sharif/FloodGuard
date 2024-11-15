@@ -17,10 +17,10 @@ export default function VictimPost(post: VictimPostType) {
             <div className="flex items-center text-sm text-gray-500 space-x-2">
               <span
                 className={
-                  "px-2 py-1 rounded-full text-xs bg-green-100 text-green-800"
+                  "px-2 py-1 rounded-full text-xs bg-red-100 text-red-800"
                 }
               >
-                Volunter
+                Victim
               </span>
               <span>•</span>
               <div className="flex items-center space-x-1">
