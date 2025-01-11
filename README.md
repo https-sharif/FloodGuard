@@ -31,8 +31,8 @@ FloodGuard Aid Network is a web-based application designed to assist flood-affec
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/aroyy007/FloodGuard_Aid_Network.git
-   cd FloodGuard_Aid_Network
+   git clone https://github.com/https-sharif/FloodGuard.git
+   cd FloodGuard
 2. **Install dependencies**:
    ```bash
    npm install
@@ -62,8 +62,8 @@ FloodGuard Aid Network is a web-based application designed to assist flood-affec
    Make sure to set up the following environment variables in your ```.env``` file:
 
    ```plaintext
-   REACT_APP_GOOGLE_MAPS_API_KEY=<Your Google Maps API Key>
-   REACT_APP_OPENWEATHER_API_KEY=<Your OpenWeatherMap API Key>
+   VITE_GOOGLE_MAPS_API_KEY=<Your Google Maps API Key>
+   VITE_OPENWEATHER_API_KEY=<Your OpenWeatherMap API Key>
    ```
 
 ## Project Structure
